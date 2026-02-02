@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>Dynamic Story Viewer</title>
+  <title>التعلم المرن</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 20px;
+      direction: rtl; /* Arabic layout */
     }
     iframe {
-      width: 100%;
+      width: 1080px;
       height: 920px;
-     border: 1px solid #ccc;
+      border: 1px solid #ccc;
       margin-bottom: 20px;
     }
     button {
@@ -28,17 +29,18 @@
   </style>
 </head>
 <body>
+  <h1>التعلم المرن</h1>
 
-  <!-- Iframe to load external story.html -->
+  <!-- Iframe to load Articulate story.html -->
   <iframe id="storyFrame"></iframe>
 
   <div>
-    <button id="prevBtn">Previous</button>
-    <button id="nextBtn">Next</button>
+    <button id="prevBtn">السابق</button>
+    <button id="nextBtn">التالي</button>
   </div>
 
   <script>
-    // Array of story file paths
+    // Paths to your Articulate story.html files
     const pages = [
       "element1/story.html",
       "element3/story.html",
@@ -51,20 +53,17 @@
     const prevBtn = document.getElementById("prevBtn");
     const nextBtn = document.getElementById("nextBtn");
 
-    // Load a page into the iframe
     function loadPage(index) {
       frame.src = pages[index];
       currentPage = index;
       updateButtons();
     }
 
-    // Enable/disable buttons dynamically
     function updateButtons() {
       prevBtn.disabled = currentPage === 0;
       nextBtn.disabled = currentPage === pages.length - 1;
     }
 
-    // Button actions
     prevBtn.addEventListener("click", () => {
       if (currentPage > 0) loadPage(currentPage - 1);
     });
@@ -78,6 +77,3 @@
   </script>
 </body>
 </html>
-
-
-
