@@ -1,87 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>External Content Navigator</title>
-    <!-- Include jQuery via CDN -->
-    <script src="https://code.jquery.com"></script>
-    
-    <style>
-        body { font-family: sans-serif; padding: 20px; text-align: center; }
-        #content-container { 
-            border: 2px solid #ddd; 
-            margin: 20px auto; 
-            padding: 20px; 
-            max-width: 600px; 
-            min-height: 300px; 
-            text-align: left;
-        }
-        button { padding: 10px 20px; cursor: pointer; }
-        button:disabled { cursor: not-allowed; opacity: 0.5; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Story Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    #content {
+      border: 1px solid #ccc;
+      padding: 20px;
+      min-height: 200px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+    }
+    button:disabled {
+      background-color: #ddd;
+      color: #666;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
+  <h1>Story Viewer</h1>
+  <div id="content">Loading...</div>
+  <div>
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
+  </div>
 
-    <h1>Project Browser</h1>
+  <script>
+    // List of story file paths
+    const pages = [
+      "element1/story.html",
+      "element2/story.html",
+      "element3/story.html"
+    ];
 
-    <!-- Navigation Controls -->
-    <div class="controls">
-        <button id="prevBtn">← Previous</button>
-        <span id="page-info">Page 1 of 3</span>
-        <button id="nextBtn">Next →</button>
-    </div>
+    let currentPage = 0;
 
-    <!-- Target Div for External HTML -->
-    <div id="content-container">Loading content...</div>
+    const contentDiv = document.getElementById("content");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
 
-    <script>
-        $(document).ready(function() {
-            // 1. Array of relative paths to your HTML files
-            const pages = [
-                "element1/story.html", 
-                "element2/story.html", 
-                "element3/story.html"
-            ];
-            
-            let currentIndex = 0;
-
-            // 2. Core function to load content and update UI
-            function updateDisplay() {
-                // Load the file into the div
-                $("#content-container").load(pages[currentIndex], function(response, status, xhr) {
-                    if (status == "error") {
-                        $(this).html("<p style='color:red;'>Error loading file: " + xhr.statusText + "</p>");
-                    }
-                });
-
-                // Update the page counter text
-                $("#page-info").text(`Page ${currentIndex + 1} of ${pages.length}`);
-
-                // Enable/Disable buttons based on current index
-                $("#prevBtn").prop("disabled", currentIndex === 0);
-                $("#nextBtn").prop("disabled", currentIndex === pages.length - 1);
-            }
-
-            // 3. Event Listeners
-            $("#nextBtn").click(function() {
-                if (currentIndex < pages.length - 1) {
-                    currentIndex++;
-                    updateDisplay();
-                }
-            });
-
-            $("#prevBtn").click(function() {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    updateDisplay();
-                }
-            });
-
-            // 4. Initial Load
-            updateDisplay();
+    // Function to load a page
+    function loadPage(index) {
+      fetch(pages[index])
+        .then(response => response.text())
+        .then(data => {
+          contentDiv.innerHTML = data;
+          currentPage = index;
+          updateButtons();
+        })
+        .catch(err => {
+          contentDiv.innerHTML = "Error loading page.";
+          console.error(err);
         });
-    </script>
+    }
 
+    // Update button states
+    function updateButtons() {
+      prevBtn.disabled = currentPage === 0;
+      nextBtn.disabled = currentPage === pages.length - 1;
+    }
+
+    // Button event listeners
+    prevBtn.addEventListener("click", () => {
+      if (currentPage > 0) {
+        loadPage(currentPage - 1);
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentPage < pages.length - 1) {
+        loadPage(currentPage + 1);
+      }
+    });
+
+    // Load the first page initially
+    loadPage(0);
+  </script>
 </body>
 </html>
+
